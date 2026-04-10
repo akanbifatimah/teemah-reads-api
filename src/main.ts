@@ -14,12 +14,15 @@ async function bootstrap() {
     }),
   );
 
-  // app.enableCors({ origin: 'http://localhost:5174' });
   app.enableCors({
-  origin: ['http://localhost:5173', 'http://localhost:5174', 'https://teemah-reads-web.vercel.app/'],
-  methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
-  credentials: true,
-});
+    origin: [
+      'http://localhost:5173',
+      'http://localhost:5174',
+      'https://teemah-reads-web.vercel.app', 
+    ],
+    methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
+    credentials: true,
+  });
 
   // Swagger setup
   const config = new DocumentBuilder()
