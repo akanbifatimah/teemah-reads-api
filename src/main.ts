@@ -1,15 +1,33 @@
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
+import { ValidationPipe } from '@nestjs/common';
+import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
 
-  app.enableCors({
-    origin: 'http://localhost:5173', // Vite's default port
-    methods: ['GET', 'POST', 'PUT', 'DELETE'],
-  });
+  app.useGlobalPipes(
+    new ValidationPipe({
+      whitelist: true,
+      forbidNonWhitelisted: true,
+      transform: true,
+    }),
+  );
+
+  app.enableCors({ origin: 'http://localhost:5174' });
+
+  // Swagger setup
+  const config = new DocumentBuilder()
+    .setTitle('Books API')
+    .setDescription('A simple REST API for managing books')
+    .setVersion('1.0')
+    .build();
+
+  const document = SwaggerModule.createDocument(app, config);
+  SwaggerModule.setup('api/docs', app, document); // available at /api/docs
 
   await app.listen(process.env.PORT ?? 3000);
-  console.log('API running on http://localhost:3000');
+  console.log('API:  http://localhost:3000');
+  console.log('Docs: http://localhost:3000/api/docs');
 }
 bootstrap();
