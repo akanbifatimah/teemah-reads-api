@@ -19,23 +19,21 @@ export class AuthService {
   ) {}
 
   async register(dto: RegisterDto) {
-  const existing = await this.userModel.findOne({ email: dto.email });
+    const existing = await this.userModel.findOne({ email: dto.email });
 
-  if (existing) {
-    throw new ConflictException('Email already registered');
+    if (existing) {
+      throw new ConflictException('Email already registered');
+    }
+
+    const hashedPassword = await bcrypt.hash(dto.password, 12);
+
+    const user = await this.userModel.create({
+      email: dto.email,
+      password: hashedPassword,
+    });
+
+    return this.signToken(user._id.toString(), user.email);
   }
-
-  const hashedPassword = await bcrypt.hash(dto.password, 12);
-
-  await this.userModel.create({
-    email: dto.email,
-    password: hashedPassword,
-  });
-
-  return {
-    message: 'Account created successfully',
-  };
-}
 
   async login(dto: LoginDto) {
     const user = await this.userModel.findOne({ email: dto.email });
