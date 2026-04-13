@@ -8,13 +8,17 @@ import {
   Param,
   HttpCode,
   HttpStatus,
+  UseGuards,
 } from '@nestjs/common';
-import { ApiTags, ApiOperation, ApiResponse, ApiParam } from '@nestjs/swagger';
+import { ApiTags, ApiOperation, ApiResponse, ApiParam, ApiBearerAuth } from '@nestjs/swagger';
 import { BooksService } from './books.service';
 import { CreateBookDto } from 'src/common/dtos/create-book.dto';
 import { UpdateBookDto } from 'src/common/dtos/update-book.dto';
+import { JwtAuthGuard } from 'src/auth/jwt-auth.guard';
 
 @ApiTags('books') // groups all routes under "books" in the UI
+@ApiBearerAuth()
+@UseGuards(JwtAuthGuard)
 @Controller('books')
 export class BooksController {
   constructor(private readonly booksService: BooksService) {}
