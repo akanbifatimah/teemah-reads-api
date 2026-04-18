@@ -14,30 +14,26 @@ async function bootstrap() {
     }),
   );
 
+  // Allow requests from ANY origin
+  // This covers your web app, mobile app, Postman, Swagger — everything
   app.enableCors({
-    origin: [
-      'http://localhost:5173',
-      'http://localhost:5174',
-      'http://localhost:8081/',
-      'https://teemah-reads-web.vercel.app', 
-    ],
-    methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
-    credentials: true,
+    origin: '*',
+    methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'],
+    allowedHeaders: ['Content-Type', 'Authorization', 'Accept'],
+    credentials: false, // must be false when origin is '*'
   });
 
-  // Swagger setup
   const config = new DocumentBuilder()
     .setTitle('Books API')
-    .setDescription('A simple REST API for managing books')
+    .setDescription('REST API for managing books')
     .setVersion('1.0')
     .addBearerAuth()
     .build();
 
   const document = SwaggerModule.createDocument(app, config);
-  SwaggerModule.setup('api/docs', app, document); // available at /api/docs
+  SwaggerModule.setup('api/docs', app, document);
 
-  await app.listen(process.env.PORT ?? 3000);
-  console.log('API:  http://localhost:3000');
-  console.log('Docs: http://localhost:3000/api/docs');
+  await app.listen(process.env.PORT ?? 3000, '0.0.0.0');
+  console.log('API running on port 3000');
 }
 bootstrap();
